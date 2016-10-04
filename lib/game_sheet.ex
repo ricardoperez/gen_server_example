@@ -10,7 +10,7 @@ defmodule GenServerExample.GameSheet do
   end
 
   def show_items_in_row(pid, row_handler) do
-    GenServer.cast pid, {:result, row_handler}
+    GenServer.call pid, {:result, row_handler}
   end
 
    def init(itens) do
@@ -21,8 +21,8 @@ defmodule GenServerExample.GameSheet do
     {:noreply, Map.update(itens, row_handler, 0, fn(_) -> List.insert_at itens[row_handler], -1, item  end )}
   end
 
-  def handle_cast({:result, row_handler}, itens) do
-    IO.puts itens[row_handler]
-    {:noreply, itens}
+  def handle_call({:result, row_handler}, _from, itens) do
+    itens[row_handler] |> Enum.each(&(&1 |> IO.puts))
+    {:reply, itens[row_handler], itens}
   end
 end
